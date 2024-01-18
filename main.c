@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while ((read = getline(&line, &len, file)) != -1)
+     while ((read = getline(&line, &len, file)) != -1)
     {
         line_number++;
         if (line[read - 1] == '\n')
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "pall") == 0)
             {
-                pall(&stack, line_number);
+                pall(&stack);
             }
             else if (strcmp(opcode, "pint") == 0)
             {
