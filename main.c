@@ -1,14 +1,15 @@
 #include "monty.h"
-extern stack_t *stack;
+#define MAX_LINE_LENGTH 1024
+
+/* Global variable for the stack */
+stack_t *stack = NULL;
+
 int main(int argc, char *argv[])
 {
     FILE *file;
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
+    char line[MAX_LINE_LENGTH];
+    size_t len;
     unsigned int line_number = 0;
-    char *opcode;
-    char *arg;
 
     if (argc != 2)
     {
@@ -23,11 +24,18 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-     while ((read = getline(&line, &len, file)) != -1)
+    while (fgets(line, sizeof(line), file) != NULL)
     {
+        char *opcode, *arg;
+
         line_number++;
-        if (line[read - 1] == '\n')
-            line[read - 1] = '\0';
+
+        /* Remove newline character from the end of the line */
+        len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n')
+            line[len - 1] = '\0';
+
+        /* Tokenize the line to extract opcode and argument */
         opcode = strtok(line, " ");
         arg = strtok(NULL, " ");
 
@@ -47,26 +55,7 @@ int main(int argc, char *argv[])
             {
                 pall(&stack);
             }
-            else if (strcmp(opcode, "pint") == 0)
-            {
-                pint(&stack, line_number);
-            }
-            else if (strcmp(opcode, "pop") == 0)
-            {
-                pop(&stack, line_number);
-            }
-            else if (strcmp(opcode, "swap") == 0)
-            {
-                swap(&stack, line_number);
-            }
-            else if (strcmp(opcode, "add") == 0)
-            {
-                add(&stack, line_number);
-            }
-            else if (strcmp(opcode, "nop") == 0)
-            {
-                nop(&stack, line_number);
-            }
+            /* Add other opcode cases as needed */
             else
             {
                 fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
@@ -76,8 +65,5 @@ int main(int argc, char *argv[])
     }
 
     fclose(file);
-    if (line)
-        free(line);
-
     exit(EXIT_SUCCESS);
 }
